@@ -37,6 +37,10 @@ public:
 			return ptr->value;
 		}
 
+		void set_value(const T& data) {
+			ptr->value = data;
+		}
+
 		Iterator& operator++() {
 			ptr = ptr->next;
 			return *this;
@@ -192,6 +196,10 @@ public:
 			size--;
 		}
 		return Iterator(first);
+	}
+
+	void set_value(const T& data, Iterator it) {
+		it.set_value(data);
 	}
 
 
