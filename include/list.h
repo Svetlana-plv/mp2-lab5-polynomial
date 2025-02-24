@@ -41,6 +41,11 @@ public:
 			ptr->value = data;
 		}
 
+		Iterator operator+(int k) {
+			Iterator tmp = ptr->next;
+			return tmp;
+		}
+
 		Iterator& operator++() {
 			ptr = ptr->next;
 			return *this;

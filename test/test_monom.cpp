@@ -130,16 +130,31 @@ TEST(Monom, can_calculate_value_at_point)
 
 TEST(Monom, can_print_polynom)
 {
-	Polynom p1(Monom(1, 2, 3, 4));
+	//Polynom p1(Monom(1, 2, 3, 4));
+	Polynom p1;
 	Polynom p2(Monom(1, 5, 3, 4));
 	p1.add_monom(Monom(1, 2, 3, 4));
 	p1.add_monom(Monom(7, 1, 1, 1));
 	p1.add_monom(Monom(8, 1, 1, 0));
 	p1.print();
+	p2.print();
 	Polynom p = p1 + p2;
 	p.print();
-	Polynom p3 = p - p2;
-	p3.print();
+	//Polynom p3 = p - p2;
+	//p3.print();
+}
+
+TEST(Monom, can_mul_polynoms)
+{
+	Polynom p1(Monom(1, 100));
+	Polynom p2(Monom(2, 100));
+	p1.add_monom(Monom(3, 210));
+	//p1.add_monom(Monom(7, 1, 1, 1));
+	p2.add_monom(Monom(7, 101));
+	p1.print();
+	p2.print();
+	Polynom p = p1 * p2;
+	p.print();
 }
 
 //TEST(Monom, can_addmonom)
@@ -149,10 +164,30 @@ TEST(Monom, can_print_polynom)
 //	p.print();
 //}
 
-TEST(Monom, can_addmonom)
+//TEST(Monom, can_addmonom)
+//{
+//	Polynom p;
+//	p.add_monom(Monom(1, 2, 3, 4));
+//	p.erase_zero();
+//	p.print();
+//}
+
+//TEST(Monom, polinom_can_add_monom)
+//{
+//	Polynom p1(Monom(1, 234));
+//	Monom m(2, 234);
+//
+//	Polynom p = p1 - m;
+//	p.print();
+//}
+
+TEST(Monom, polinom_can_mul_monom)
 {
-	Polynom p;
-	p.add_monom(Monom(1, 2, 3, 4));
-	p.erase_zero();
+	Polynom p1(Monom(1, 234));
+	p1.add_monom(Monom(1, 1, 1, 1));
+	Monom m(2, 231);
+	p1.print();
+
+	Polynom p = p1 * m;
 	p.print();
 }

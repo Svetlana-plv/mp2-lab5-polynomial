@@ -72,6 +72,10 @@ Monom Monom::operator*(double c)const {
 	return tmp;
 }
 
+Polynom Monom::operator*(const Polynom& p)const {
+	return p * (*this);
+}
+
 
 size_t Monom::deg_x()const {
 	return this->deg / 100;

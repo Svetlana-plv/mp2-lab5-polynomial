@@ -63,14 +63,17 @@ public:
 	Polynom(const Monom& m);
 
 	Polynom operator*(const double c)const;
+	friend Polynom operator*(double c, const Polynom& p);
 
-	Polynom operator+(Monom& p);
-	Polynom operator-(Monom& p);
+	Polynom operator+(const Monom& p)const;
+	Polynom operator-(const Monom& p)const;
 	Polynom operator*(const Monom& p)const;
 
+	bool operator==(const Polynom& p)const;
+	bool operator!=(const Polynom& p)const;
 
-	Polynom operator+(Polynom& p);
-	Polynom operator-(Polynom& p);
+	Polynom operator+(const Polynom& p)const;
+	Polynom operator-(const Polynom& p)const;
 	Polynom operator*(const Polynom& p)const;
 
 	double point(double x, double y, double z);
