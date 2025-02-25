@@ -4,6 +4,7 @@
 Monom::Monom() : coef(0), deg(0) {};
 
 Monom::Monom(double cf, size_t dg): coef(cf), deg(dg) {};
+
 Monom::Monom(double cf, size_t x, size_t y, size_t z) : coef(cf) {
 	this->deg = x * 100 + y * 10 + z;
 };

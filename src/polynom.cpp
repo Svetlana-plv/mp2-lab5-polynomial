@@ -1,11 +1,11 @@
 #include"polynom.h"
 
 Polynom::Polynom() {
-	polynom.insert_front(Monom());
+	this->polynom.insert_front(Monom());
 }
 
 Polynom::Polynom(const Monom& m) {
-	polynom.insert_front(m);
+	this->polynom.insert_front(m);
 }
 
 bool Polynom::operator==(const Polynom& p)const {
@@ -86,8 +86,8 @@ Polynom Polynom::operator+(const Polynom& p)const {
 			it2++;
 		}
 		else {
-			if (it1.value().get_coef() + it2.value().get_coef()>EPS)
-				tmp.add_monom( it1.value() + it2.value());
+			if (it1.value().get_coef() + it2.value().get_coef() > EPS)
+				tmp.add_monom(it1.value() - it2.value());
 			it1++;
 			it2++;
 		}
@@ -119,29 +119,26 @@ Polynom Polynom::operator+(const Polynom& p)const {
 }
 
 Polynom Polynom::operator-(const Polynom& p)const {
-
 	Polynom tmp;
 
-	List<Monom>::Iterator it = tmp.polynom.begin();
 	List<Monom>::Iterator it1 = this->polynom.begin();
 	List<Monom>::Iterator it2 = p.polynom.begin();
 
 	while (it1 != polynom.end() && it2 != polynom.end()) {
 		if (it1.value() < it2.value()) {
-			tmp.add_monom_after(it1.value(), it);
+			tmp.add_monom(it1.value());
 			it1++;
 		}
 		else if (it1.value() > it2.value()) {
-			tmp.add_monom_after(Monom(-it2.value().get_coef(), it2.value().get_deg()), it);
+			tmp.add_monom(Monom(-it2.value().get_coef(), it2.value().get_deg()));
 			it2++;
 		}
 		else {
 			if (it1.value().get_coef() - it2.value().get_coef() > EPS)
-				tmp.add_monom_after(it1.value() - it2.value(), it);
+				tmp.add_monom(it1.value() - it2.value());
 			it1++;
 			it2++;
 		}
-		it++;
 	}
 
 	// Define polinom that has the remaining monoms
@@ -149,22 +146,20 @@ Polynom Polynom::operator-(const Polynom& p)const {
 	if (it2 != polynom.end()) {
 		flag = false;
 	}
-	
+
 	// Add remaining monoms from this polinom
 	if (flag) {
 		while (it1 != polynom.end()) {
-			tmp.add_monom_after(it1.value(), it);
+			tmp.add_monom(it1.value());
 			it1++;
-			it++;
 		}
 	}
 
-	// Sub remaining monoms from other polinom
+	// Add remaining monoms from other polinom
 	else {
 		while (it2 != polynom.end()) {
-			tmp.add_monom_after(Monom(-it2.value().get_coef(), it2.value().get_deg()), it);
+			tmp.add_monom(Monom(-it2.value().get_coef(), it2.value().get_deg()));
 			it2++;
-			it++;
 		}
 	}
 
@@ -173,12 +168,6 @@ Polynom Polynom::operator-(const Polynom& p)const {
 
 Polynom Polynom::operator*(const Polynom& p)const {
 	Polynom tmp;
-
-	//for (List<Monom>::Iterator it1 = this->polynom.begin(); it1 != this->polynom.end(); it1++) {
-	//	for (List<Monom>::Iterator it2 = p.polynom.begin(); it2 != this->polynom.end(); it2++) {
-	//		tmp.add_monom(it1.value() * it2.value());
-	//	}
-	//}
 
 	for (List<Monom>::Iterator it1 = this->polynom.begin(); it1 != this->polynom.end(); it1++) {
 		tmp = tmp + p * it1.value();
@@ -218,10 +207,16 @@ void Polynom::add_monom(const Monom& m) {
 		it = it1;
 		it1++;
 	}
-	if (it.value().get_deg() == m.get_deg())
-		this->polynom.set_value(it.value() + m, it);
-	if (it1 != polynom.end() && it1.value().get_deg() == m.get_deg())
-		this->polynom.set_value(it1.value() + m, it1);
+	if (it.value().get_deg() == m.get_deg()) {
+		if (it.value().get_coef() + m.get_coef() > EPS) {
+			this->polynom.set_value(it.value() + m, it);
+		}
+	}
+	else if (it1 != polynom.end()&& it != it1 && it1.value().get_deg() == m.get_deg()) {
+		if (it1.value().get_coef() + m.get_coef() > EPS) {
+			this->polynom.set_value(it1.value() + m, it1);
+		}
+	}
 	else {
 		if(it==it1) this->polynom.insert_front(m);
 		else this->polynom.insert_after(m, it);
@@ -236,7 +231,8 @@ void Polynom::add_monom_after(const Monom& m, List<Monom>::Iterator it) {
 		return;
 	}
 	if (it.value().get_deg() == m.get_deg())
-		it.value() += m;
+		if(it.value().get_coef() + m.get_coef()>EPS)
+			it.value() += m;
 	else {
 		this->polynom.insert_after(m, it);
 	}

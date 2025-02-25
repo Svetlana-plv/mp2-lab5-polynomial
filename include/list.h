@@ -42,7 +42,8 @@ public:
 		}
 
 		Iterator operator+(int k) {
-			Iterator tmp = ptr->next;
+			for(int i=0; i<k; i++)
+				Iterator tmp = ptr->next;
 			return tmp;
 		}
 
