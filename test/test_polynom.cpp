@@ -99,7 +99,7 @@ TEST(Polynom, can_sub_monom_and_deg_not_in_polynom)
 	ASSERT_EQ(p1, p - Monom(2, 234));
 }
 
-TEST(Polynom, can_add_monom_and_deg_in_polynom_left)
+TEST(Polynom, can_add_monom_and_deg_in_polynom)
 {
 	Polynom p;
 	p.add_monom(Monom(1, 111));
@@ -115,7 +115,7 @@ TEST(Polynom, can_add_monom_and_deg_in_polynom_left)
 
 }
 
-TEST(Polynom, can_sub_monom_and_deg_in_polynom_left)
+TEST(Polynom, can_sub_monom_and_deg_in_polynom)
 {
 	Polynom p;
 	p.add_monom(Monom(1, 111));
@@ -131,38 +131,6 @@ TEST(Polynom, can_sub_monom_and_deg_in_polynom_left)
 
 }
 
-TEST(Polynom, can_add_monom_and_deg_in_polynom_right)
-{
-	Polynom p;
-	p.add_monom(Monom(1, 111));
-	p.add_monom(Monom(1, 123));
-	p.add_monom(Monom(1, 234));
-
-	Polynom p1;
-	p1.add_monom(Monom(1, 111));
-	p1.add_monom(Monom(1, 123));
-	p1.add_monom(Monom(3, 234));
-
-	ASSERT_EQ(p1, p + Monom(2, 234));
-
-}
-
-TEST(Polynom, can_sub_monom_and_deg_in_polynom_right)
-{
-	Polynom p;
-	p.add_monom(Monom(1, 111));
-	p.add_monom(Monom(1, 123));
-	p.add_monom(Monom(3, 234));
-
-	Polynom p1;
-	p1.add_monom(Monom(1, 111));
-	p1.add_monom(Monom(1, 123));
-	p1.add_monom(Monom(1, 234));
-
-	ASSERT_EQ(p1, p - Monom(2, 234));
-
-}
-
 TEST(Polynom, can_mul_monom)
 {
 	Polynom p1(Monom(1, 234));
@@ -172,6 +140,154 @@ TEST(Polynom, can_mul_monom)
 	p.add_monom(Monom(6, 342));
 
 	ASSERT_EQ(p, p1 * Monom(2, 231));
+}
+
+
+TEST(Polynom, can_add_polynom_and_all_degs_are_different)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+	Polynom p2;
+	p2.add_monom(Monom(3, 123));
+	p2.add_monom(Monom(4, 234));
+
+	Polynom p;
+	p.add_monom(Monom(1, 111));
+	p.add_monom(Monom(2, 222));
+	p.add_monom(Monom(3, 123));
+	p.add_monom(Monom(4, 234));
+	
+	ASSERT_EQ(p, p1 + p2);
+}
+
+TEST(Polynom, can_add_polynom_and_one_degs_match)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+	Polynom p2;
+	p2.add_monom(Monom(3, 123));
+	p2.add_monom(Monom(4, 111));
+
+	Polynom p;
+	p.add_monom(Monom(5, 111));
+	p.add_monom(Monom(2, 222));
+	p.add_monom(Monom(3, 123));
+
+	ASSERT_EQ(p, p1 + p2);
+}
+
+TEST(Polynom, can_add_polynom_with_itself)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+
+	Polynom p;
+	p.add_monom(Monom(2, 111));
+	p.add_monom(Monom(4, 222));
+
+
+	ASSERT_EQ(p, p1 + p1);
+}
+
+TEST(Polynom, can_add_empty_polynom)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+
+	Polynom p;
+
+	ASSERT_EQ(p1, p1 + p);
+}
+
+TEST(Polynom, can_sub_polynom_and_all_degs_are_different)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+	Polynom p2;
+	p2.add_monom(Monom(3, 123));
+	p2.add_monom(Monom(4, 234));
+
+	Polynom p;
+	p.add_monom(Monom(-1, 111));
+	p.add_monom(Monom(-2, 222));
+	p.add_monom(Monom(3, 123));
+	p.add_monom(Monom(4, 234));
+
+	ASSERT_EQ(p, p2-p1);
+}
+
+TEST(Polynom, can_sub_polynom_and_one_degs_match)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+	Polynom p2;
+	p2.add_monom(Monom(3, 123));
+	p2.add_monom(Monom(6, 111));
+
+	Polynom p;
+	p.add_monom(Monom(5, 111));
+	p.add_monom(Monom(-2, 222));
+	p.add_monom(Monom(3, 123));
+
+	ASSERT_EQ(p, p2 - p1);
+}
+
+TEST(Polynom, can_sub_polynom_with_itself)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+
+	Polynom p;
+
+	ASSERT_EQ(p, p1 - p1);
+}
+
+TEST(Polynom, can_sub_empty_polynom)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+
+	Polynom p;
+
+	ASSERT_EQ(p1, p1 - p);
+}
+
+TEST(Polynom, can_mul_empty_polynom)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+
+	Polynom p;
+
+	ASSERT_EQ(p, p1 * p);
+}
+
+
+TEST(Polynom, can_mul_polynom_and_all_degs_are_different)
+{
+	Polynom p1;
+	p1.add_monom(Monom(1, 111));
+	p1.add_monom(Monom(2, 222));
+	Polynom p2;
+	p2.add_monom(Monom(3, 123));
+	p2.add_monom(Monom(4, 112));
+
+	Polynom p;
+	p.add_monom(Monom(3, 234));
+	p.add_monom(Monom(6, 345));
+	p.add_monom(Monom(4, 223));
+	p.add_monom(Monom(8, 334));
+
+	ASSERT_EQ(p, p1 * p2);
 }
 
 
