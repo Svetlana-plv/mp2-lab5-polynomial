@@ -31,6 +31,20 @@ TEST(Polynom, can_addmonom_in_different_way)
 	ASSERT_EQ(p1, p);
 }
 
+TEST(Polynom, can_addmonom_that_already_exist_in_first_place)
+{
+	Polynom p;
+	p.add_monom(Monom(1, 123));
+	p.add_monom(Monom(1, 234));
+	p.add_monom(Monom(0, 000));
+
+	Polynom p1;
+	p1.add_monom(Monom(1, 123));
+	p1.add_monom(Monom(1, 234));
+
+	ASSERT_EQ(p1, p);
+}
+
 TEST(Polynom, can_addmonom_that_already_exist)
 {
 	Polynom p;
@@ -62,6 +76,7 @@ TEST(Polynom, can_mul_monom_by_const)
 	Polynom p1;
 	p1.add_monom(Monom(2, 123));
 	p1.add_monom(Monom(2, 234));
+
 	ASSERT_EQ(p1, p*2);
 }
 
@@ -71,9 +86,11 @@ TEST(Polynom, can_friend_mul_monom_by_const)
 	p.add_monom(Monom(1, 123));
 	p.add_monom(Monom(1, 234));
 
+
 	Polynom p1;
 	p1.add_monom(Monom(2, 123));
 	p1.add_monom(Monom(2, 234));
+	
 	ASSERT_EQ(p1, 2 * p);
 }
 
@@ -188,7 +205,6 @@ TEST(Polynom, can_add_polynom_with_itself)
 	p.add_monom(Monom(2, 111));
 	p.add_monom(Monom(4, 222));
 
-
 	ASSERT_EQ(p, p1 + p1);
 }
 
@@ -213,10 +229,13 @@ TEST(Polynom, can_sub_polynom_and_all_degs_are_different)
 	p2.add_monom(Monom(4, 234));
 
 	Polynom p;
-	p.add_monom(Monom(-1, 111));
+	
 	p.add_monom(Monom(-2, 222));
 	p.add_monom(Monom(3, 123));
 	p.add_monom(Monom(4, 234));
+	p.add_monom(Monom(-1, 111));
+
+	Polynom p3 = p2 -p1;
 
 	ASSERT_EQ(p, p2-p1);
 }

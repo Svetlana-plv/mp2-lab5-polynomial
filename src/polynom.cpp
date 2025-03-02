@@ -6,6 +6,7 @@ Polynom::Polynom() {
 
 Polynom::Polynom(const Monom& m) {
 	this->polynom.insert_front(m);
+	this->polynom.insert_front(Monom());
 }
 
 bool Polynom::operator==(const Polynom& p)const {
@@ -61,6 +62,7 @@ Polynom Polynom::operator*(const Monom& m)const {
 	Polynom tmp;
 
 	List<Monom>::Iterator it = this->polynom.begin();
+	it++; // because first monom is empty
 
 	while (it != this->polynom.end()) {
 		tmp.add_monom(it.value() * m);
@@ -71,23 +73,30 @@ Polynom Polynom::operator*(const Monom& m)const {
 }
 
 Polynom Polynom::operator+(const Polynom& p)const {
+	if (p==Polynom()) return (*this);
+	if ((*this) == Polynom()) return p;
 	Polynom tmp;
 
 	List<Monom>::Iterator it1 = this->polynom.begin();
 	List<Monom>::Iterator it2 = p.polynom.begin();
+	List<Monom>::Iterator it = tmp.polynom.begin();
 
 	while (it1 != polynom.end() && it2 != polynom.end()) {
 		if (it1.value() < it2.value()) {
-			tmp.add_monom(it1.value());
+			tmp.add_monom_after(it1.value(), it);
 			it1++;
+			it++;
 		}
 		else if (it1.value() > it2.value()) {
-			tmp.add_monom(it2.value());
+			tmp.add_monom_after(it2.value(), it);
 			it2++;
+			it++;
 		}
 		else {
-			if (it1.value().get_coef() + it2.value().get_coef() > EPS)
-				tmp.add_monom(it1.value() + it2.value());
+			if (abs(it1.value().get_coef() + it2.value().get_coef()) > EPS) {
+				tmp.add_monom_after(it1.value() + it2.value(), it);
+				it++;
+			}
 			it1++;
 			it2++;
 		}
@@ -102,16 +111,18 @@ Polynom Polynom::operator+(const Polynom& p)const {
 	// Add remaining monoms from this polinom
 	if (flag) {
 		while (it1 != polynom.end()) {
-			tmp.add_monom(it1.value());
+			tmp.add_monom_after(it1.value(), it);
 			it1++;
+			it++;
 		}
 	}
 
 	// Add remaining monoms from other polinom
 	else {
 		while (it2 != polynom.end()) {
-			tmp.add_monom(it2.value());
+			tmp.add_monom_after(it2.value(), it);
 			it2++;
+			it++;
 		}
 	}
 
@@ -119,52 +130,8 @@ Polynom Polynom::operator+(const Polynom& p)const {
 }
 
 Polynom Polynom::operator-(const Polynom& p)const {
-	if ((*this) == p) return Polynom();
-	Polynom tmp;
 
-	List<Monom>::Iterator it1 = this->polynom.begin();
-	List<Monom>::Iterator it2 = p.polynom.begin();
-
-	while (it1 != polynom.end() && it2 != polynom.end()) {
-		if (it1.value() < it2.value()) {
-			tmp.add_monom(it1.value());
-			it1++;
-		}
-		else if (it1.value() > it2.value()) {
-			tmp.add_monom(Monom(-it2.value().get_coef(), it2.value().get_deg()));
-			it2++;
-		}
-		else {
-			if (it1.value().get_coef() - it2.value().get_coef() > EPS)
-				tmp.add_monom(it1.value() - it2.value());
-			it1++;
-			it2++;
-		}
-	}
-
-	// Define polinom that has the remaining monoms
-	bool flag = true;
-	if (it2 != polynom.end()) {
-		flag = false;
-	}
-
-	// Add remaining monoms from this polinom
-	if (flag) {
-		while (it1 != polynom.end()) {
-			tmp.add_monom(it1.value());
-			it1++;
-		}
-	}
-
-	// Add remaining monoms from other polinom
-	else {
-		while (it2 != polynom.end()) {
-			tmp.add_monom(Monom(-it2.value().get_coef(), it2.value().get_deg()));
-			it2++;
-		}
-	}
-
-	return tmp;
+	return (*this) + p * (-1);
 }
 
 Polynom Polynom::operator*(const Polynom& p)const {
@@ -172,8 +139,11 @@ Polynom Polynom::operator*(const Polynom& p)const {
 
 	if ((*this) == tmp || p == tmp) return tmp;
 
-	for (List<Monom>::Iterator it1 = this->polynom.begin(); it1 != this->polynom.end(); it1++) {
-		tmp = tmp + p * it1.value();
+	List<Monom>::Iterator it = this->polynom.begin();
+	it++; // because first monom is empty
+
+	for (; it != this->polynom.end(); it++) {
+		tmp = tmp + p * it.value();
 	}
 
 	return tmp;
@@ -207,7 +177,7 @@ void Polynom::add_monom(const Monom& m) {
 		it1++;
 	}
 	if (it.value().get_deg() == m.get_deg()) {
-		if (it.value().get_coef() + m.get_coef() > EPS) {
+		if (abs(it.value().get_coef() + m.get_coef()) > EPS) {
 			this->polynom.set_value(it.value() + m, it);
 		}
 	}
@@ -216,7 +186,7 @@ void Polynom::add_monom(const Monom& m) {
 		else this->polynom.insert_after(m, it);
 	}
 
-	(*this).erase_zero();
+	//(*this).erase_zero();
 }
 
 void Polynom::add_monom_after(const Monom& m, List<Monom>::Iterator it) {
@@ -224,14 +194,15 @@ void Polynom::add_monom_after(const Monom& m, List<Monom>::Iterator it) {
 		polynom.insert_front(m);
 		return;
 	}
-	if (it.value().get_deg() == m.get_deg())
-		if(it.value().get_coef() + m.get_coef()>EPS)
+	if (it.value().get_deg() == m.get_deg()) {
+		if (abs(it.value().get_coef() + m.get_coef()) > EPS)
 			it.value() += m;
+	}
 	else {
 		this->polynom.insert_after(m, it);
 	}
 
-	(*this).erase_zero();
+	//(*this).erase_zero();
 }
 
 void Polynom::erase_zero() {
@@ -239,7 +210,7 @@ void Polynom::erase_zero() {
 
 	else {
 		List<Monom>::Iterator it = this->polynom.begin();
-		if (it.value().get_coef() < EPS) {
+		if (abs(it.value().get_coef()) < EPS) {
 			this->polynom.erase_front();
 		}
 	}
