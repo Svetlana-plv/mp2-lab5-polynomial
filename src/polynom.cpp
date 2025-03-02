@@ -61,6 +61,8 @@ Polynom Polynom::operator*(const Monom& m)const {
 
 	Polynom tmp;
 
+	if (m == Monom()) return tmp;
+
 	List<Monom>::Iterator it = this->polynom.begin();
 	it++; // because first monom is empty
 
@@ -73,8 +75,8 @@ Polynom Polynom::operator*(const Monom& m)const {
 }
 
 Polynom Polynom::operator+(const Polynom& p)const {
-	if (p==Polynom()) return (*this);
-	if ((*this) == Polynom()) return p;
+	//if (p==Polynom()) return (*this);
+	//if ((*this) == Polynom()) return p;
 	Polynom tmp;
 
 	List<Monom>::Iterator it1 = this->polynom.begin();
@@ -207,11 +209,20 @@ void Polynom::add_monom_after(const Monom& m, List<Monom>::Iterator it) {
 
 void Polynom::erase_zero() {
 	if (this->polynom.get_size() == 1) return;
-
 	else {
 		List<Monom>::Iterator it = this->polynom.begin();
-		if (abs(it.value().get_coef()) < EPS) {
-			this->polynom.erase_front();
+		List<Monom>::Iterator it_prev = it++;
+		while (it+1 != this->polynom.end()) {
+			if (abs(it.value().get_coef()) < EPS) {
+				this->polynom.erase_after(it_prev);
+				it = it_prev + 1;
+			}
+			else {
+				it = it_prev++;
+			}
 		}
+		if (abs(it.value().get_coef()) < EPS)
+			this->polynom.erase_after(it_prev);
+
 	}
 }

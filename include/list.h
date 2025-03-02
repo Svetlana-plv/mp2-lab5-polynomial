@@ -42,8 +42,9 @@ public:
 		}
 
 		Iterator operator+(int k) {
+			Iterator tmp = *this;
 			for(int i=0; i<k; i++)
-				Iterator tmp = ptr->next;
+				tmp++;
 			return tmp;
 		}
 
