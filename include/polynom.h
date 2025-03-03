@@ -1,3 +1,4 @@
+#pragma once
 #include "list.h"
 #include "parser.h"
 
@@ -61,6 +62,7 @@ public:
 
 	Polynom();
 	Polynom(const Monom& m);
+	Polynom(const std::string str);
 
 	bool operator==(const Polynom& p)const;
 	bool operator!=(const Polynom& p)const;
@@ -78,6 +80,8 @@ public:
 
 	double point(double x, double y, double z);
 	void print();
+
+	void parse_string(std::string str);
 
 	void add_monom(const Monom& m);
 	void add_monom_after(const Monom& m, List<Monom>::Iterator it);

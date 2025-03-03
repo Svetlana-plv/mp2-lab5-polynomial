@@ -7,17 +7,17 @@ class Parser {
 
 public:
 
-	void lex_analysis(std::string string) {
-		string.erase(remove_if(string.begin(), string.end(), ::isspace), string.end());
+	void static lex_analysis(std::string str) {
+		str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
 
-		if (string == "") {
+		if (str == "") {
 			std::string incorrect_symbol = "Cannot process empty expression!";
 			throw incorrect_symbol;
 		}
 
-		for (int i = 0; i < string.size(); i++) {
+		for (int i = 0; i < str.size(); i++) {
 
-			char cur = string[i];
+			char cur = str[i];
 
 			// check if every symbol is a letter, number or operation sign
 			bool flage = false;
@@ -35,11 +35,14 @@ public:
 		}
 	}
 
-	std::vector<std::pair< double, int>> snt_analysis(std::string str) {
+	std::vector<std::pair< double, int>> static snt_analysis(std::string str) {
+
+		str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
 
 		int status = 0;
 		int count_point = 0;
 		bool flag_num = true; // true - number, false - degree
+		bool flag_end = false; 
 		int flag_degree = 0; // x -> 1, y -> 2, z -> 3
 		int operation = 1; // operation = 1 -> +, operation = -1 -> -
 		int count_monoms = 0;
@@ -53,8 +56,10 @@ public:
 			switch (status)
 			{
 			case 0:
+				coefficient = "";
 				count_point = 0;
 				flag_num = true;
+				flag_end = false;
 				flag_degree = 0;
 				pair.first = 0;
 				pair.second = 0;
@@ -76,12 +81,14 @@ public:
 				else {
 
 					if ('1' <= str[i] && str[i] <= '9') {
-						pair.first += str[i];
+						coefficient += str[i];
 						status = 1;
 					}
-
+					else if (str[i] == '0' && i+1<sz && str[i+1]=='.') {
+						coefficient += str[i];
+						status = 1;
+					}
 					else if (str[i] == '.') {
-						count_point++;
 						status = 2;
 					}
 					else if (str[i] == 'x') {
@@ -99,7 +106,7 @@ public:
 					}
 				}
 				break;
-			case 1:
+			case 1: // number
 				if ('0' <= str[i] && str[i] <= '9') { 
 					if (flag_num) { 
 						coefficient += str[i];
@@ -119,9 +126,11 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 2:
+			case 2: // point
 				count_point++;
 				if (count_point == 1) {
+					coefficient += '.';
+					coefficient += str[i];
 					if ('0' <= str[i] && str[i] <= '9') status = 1;
 					else if (str[i] == 'x') {
 						status = 4;
@@ -136,20 +145,21 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 3:
+			case 3: // deg ^
 				if ('0' <= str[i] && str[i] <= '9') { 
 					if (flag_degree == 1) {
-						pair.second += (int)str[i]*100;
-						status = 0;
+						pair.second += std::atoi(&str[i])*100;
+						status = 1;
 					}
-					if (flag_degree == 2) {
-						pair.second += (int)str[i] * 10;
-						status = 0;
+					else if (flag_degree == 2) {
+						pair.second += std::atoi(&str[i]) * 10;
+						status = 1;
 					}
-					if (flag_degree == 3) {
+					else if (flag_degree == 3) {
 						count_monoms++;
+						flag_end = true;
 						pair.first = operation * std::stod(coefficient);
-						pair.second += (int)str[i];
+						pair.second += std::atoi(&str[i]);
 						v.push_back(pair);
 						status = 0;
 					}
@@ -160,7 +170,7 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 4:
+			case 4: // x
 				flag_num = false;
 				flag_degree = 1;
 				if (str[i]=='^') status = 3;
@@ -169,7 +179,7 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 5:
+			case 5: // y
 				flag_degree = 2;
 				if (str[i] == '^') status = 3;
 				else {
@@ -177,7 +187,7 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 6:
+			case 6: // z
 				flag_degree = 3;
 				if (str[i] == '^') status = 3;
 				else {
@@ -185,12 +195,15 @@ public:
 					throw incorrect_symbol;
 				}
 				break;
-			case 7:
+			case 7: // operation {+, -}
 
 				if (str[i] == '.') status = 2;
 				else if ('1' <= str[i] && str[i] <= '9') status = 1;
-				else if (str[i] < sz && str[i] == '0') {
-					if (str[i + 1] == '.' || str[i] == 'x') status = 1;
+				else if (i < sz && str[i] == '0') {
+					if (str[i + 1] == '.' || str[i] == 'x') { 
+						coefficient += str[i];
+						status = 1; 
+					}
 					else {
 						std::string incorrect_symbol = "Number can't start from zero!";
 						throw incorrect_symbol;
@@ -206,7 +219,12 @@ public:
 				break;
 			}
 		}
-		if (status == 2) {
+
+		if (status == 1 && !flag_end) {
+			std::string incorrect_symbol = "Expression cannnot end with a point!";
+			throw incorrect_symbol;
+		}
+		else if (status == 2) {
 			std::string incorrect_symbol = "Expression cannnot end with a point!";
 			throw incorrect_symbol;
 		}

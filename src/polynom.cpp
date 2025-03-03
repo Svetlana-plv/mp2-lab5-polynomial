@@ -9,6 +9,10 @@ Polynom::Polynom(const Monom& m) {
 	this->polynom.insert_front(Monom());
 }
 
+Polynom::Polynom(const std::string str) {
+	(*this).parse_string(str);
+}
+
 bool Polynom::operator==(const Polynom& p)const {
 
 	List<Monom>::Iterator it1 = this->polynom.begin();
@@ -150,6 +154,17 @@ Polynom Polynom::operator*(const Polynom& p)const {
 	return tmp;
 }
 
+void Polynom::parse_string(std::string str) {
+	Parser::lex_analysis(str);
+	std::vector<std::pair< double, int>> v;
+	v = Parser::snt_analysis(str);
+	for (int i = 0; i < v.size(); i++) {
+		double coef = v[i].first;
+		int deg = v[i].second;
+		(*this).add_monom(Monom(coef, deg));
+	}
+}
+
 double Polynom::point(double x, double y, double z) {
 	double result = 0;
 	for (List<Monom>::Iterator it = polynom.begin(); it != polynom.end(); it++) {
@@ -187,7 +202,6 @@ void Polynom::add_monom(const Monom& m) {
 		else this->polynom.insert_after(m, it);
 	}
 
-	//(*this).erase_zero();
 }
 
 void Polynom::add_monom_after(const Monom& m, List<Monom>::Iterator it) {
