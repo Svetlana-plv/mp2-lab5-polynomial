@@ -1,4 +1,5 @@
 #include "list.h"
+#include "parser.h"
 
 const double EPS = 1e-10;
 

@@ -75,8 +75,7 @@ Polynom Polynom::operator*(const Monom& m)const {
 }
 
 Polynom Polynom::operator+(const Polynom& p)const {
-	//if (p==Polynom()) return (*this);
-	//if ((*this) == Polynom()) return p;
+
 	Polynom tmp;
 
 	List<Monom>::Iterator it1 = this->polynom.begin();
