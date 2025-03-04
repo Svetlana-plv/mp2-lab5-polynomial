@@ -61,7 +61,7 @@ public:
 				flag_num = true;
 				flag_end = false;
 				flag_degree = 0;
-				pair.first = 0;
+				pair.first = 1;
 				pair.second = 0;
 
 				if (count_monoms != 0) {
@@ -158,7 +158,8 @@ public:
 					else if (flag_degree == 3) {
 						count_monoms++;
 						flag_end = true;
-						pair.first = operation * std::stod(coefficient);
+						if (coefficient != "") pair.first = std::stod(coefficient);
+						pair.first *= operation;
 						pair.second += std::atoi(&str[i]);
 						v.push_back(pair);
 						status = 0;
@@ -198,7 +199,10 @@ public:
 			case 7: // operation {+, -}
 
 				if (str[i] == '.') status = 2;
-				else if ('1' <= str[i] && str[i] <= '9') status = 1;
+				else if ('1' <= str[i] && str[i] <= '9') {
+					coefficient += str[i];
+					status = 1;
+				}
 				else if (i < sz && str[i] == '0') {
 					if (str[i + 1] == '.' || str[i] == 'x') { 
 						coefficient += str[i];

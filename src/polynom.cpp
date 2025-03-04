@@ -163,6 +163,7 @@ void Polynom::parse_string(std::string str) {
 		int deg = v[i].second;
 		(*this).add_monom(Monom(coef, deg));
 	}
+	(*this).add_monom(Monom());
 }
 
 double Polynom::point(double x, double y, double z) {

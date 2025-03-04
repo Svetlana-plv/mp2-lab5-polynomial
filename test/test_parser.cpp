@@ -163,6 +163,22 @@ TEST(Parser, can_snt_monom_with_double_coef)
 	ASSERT_NO_THROW(Parser::snt_analysis(str));
 }
 
+TEST(Parser, can_snt_monom_without_coef)
+{
+	std::string str = "x^1 y^3 z^2";
+
+	ASSERT_NO_THROW(Parser::snt_analysis(str));
+}
+
+TEST(Parser, can_snt_monom_with_minus_before_coef)
+{
+	std::string str = "- 1.2 x^1 y^3 z^2";
+
+	Parser::snt_analysis(str);
+
+	ASSERT_NO_THROW(Parser::snt_analysis(str));
+}
+
 TEST(Parser, can_snt_monom_with_point_before_coef)
 {
 	std::string str = ".4 x^1 y^3 z^2";
@@ -187,6 +203,13 @@ TEST(Parser, can_snt_monom_with_double_coef_long)
 TEST(Parser, can_snt_polynom)
 {
 	std::string str = "10.05 x^1 y^3 z^2 + 0.05 x^0 y^9 z^1";
+
+	ASSERT_NO_THROW(Parser::snt_analysis(str));
+}
+
+TEST(Parser, can_snt_polynom_with_minuse_before_and_without_coef)
+{
+	std::string str = "-x^1 y^3 z^2 + 0.05 x^0 y^9 z^1 + x^0 y^9 z^1";
 
 	ASSERT_NO_THROW(Parser::snt_analysis(str));
 }

@@ -20,6 +20,40 @@ TEST(Polynom, can_create_polynom_by_monom_correct)
 	EXPECT_EQ(p, Polynom(Monom(1, 123)));
 }
 
+TEST(Polynom, can_create_polynom_by_string)
+{
+	std::string str = "123.456 x^1 y^3 z^2 - 0.5 x^1 y^0 z^0 + 1.04 x^1 y^1 z^0";
+
+	ASSERT_NO_THROW(Polynom(str));
+}
+
+TEST(Polynom, polynom_created_by_string_correct)
+{
+	std::string str = "123.456 x^1 y^3 z^2 - 0.5 x^1 y^0 z^0 + x^1 y^1 z^0";
+
+	Polynom p1(str);
+
+	Polynom p;
+	p.add_monom(Monom(123.456, 132));
+	p.add_monom(Monom(-0.5, 100));
+	p.add_monom(Monom(1, 110));
+
+	EXPECT_EQ(p, p1);
+}
+
+TEST(Polynom, polynom_that_have_the_same_deg_created_by_string_correct)
+{
+	std::string str = "123.456 x^1 y^3 z^2 - 25.5 x^1 y^0 z^0 + x^1 y^0 z^0";
+
+	Polynom p1(str);
+
+	Polynom p;
+	p.add_monom(Monom(123.456, 132));
+	p.add_monom(Monom(-24.5, 100));
+
+	EXPECT_EQ(p, p1);
+}
+
 TEST(Polynom, can_addmonom)
 {
 	Polynom p;
@@ -442,4 +476,28 @@ TEST(Polynom, can_calculate_value_at_point_in_empty_polynom)
 	Polynom p;
 
 	EXPECT_EQ(0, p.point(1, 2, 3));
+}
+
+TEST(Polynom, can_parse_string)
+{
+	std::string str = "-123.456 x^1 y^3 z^2 - x^1 y^0 z^0 + 1. x^1 y^1 z^0";
+
+	Polynom p;
+
+	ASSERT_NO_THROW(p.parse_string(str));
+}
+
+TEST(Polynom, can_parse_string_correct)
+{
+	std::string str = "-123.456 x^1 y^3 z^2 - x^1 y^0 z^0 + 1. x^1 y^1 z^0";
+
+	Polynom p1;
+	p1.parse_string(str);
+
+	Polynom p;
+	p.add_monom(Monom(-123.456, 132));
+	p.add_monom(Monom(-1 , 100));
+	p.add_monom(Monom(1, 110));
+
+	EXPECT_EQ(p, p1);
 }
