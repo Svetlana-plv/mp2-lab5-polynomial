@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 
@@ -35,6 +36,17 @@ public:
 
 		T value() {
 			return ptr->value;
+		}
+
+		void set_value(const T& data) {
+			ptr->value = data;
+		}
+
+		Iterator operator+(int k) {
+			Iterator tmp = *this;
+			for(int i=0; i<k; i++)
+				tmp++;
+			return tmp;
 		}
 
 		Iterator& operator++() {
@@ -192,6 +204,10 @@ public:
 			size--;
 		}
 		return Iterator(first);
+	}
+
+	void set_value(const T& data, Iterator it) {
+		it.set_value(data);
 	}
 
 
